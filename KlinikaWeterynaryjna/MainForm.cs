@@ -55,5 +55,26 @@ namespace KlinikaWeterynaryjna
             okno.ShowDialog();
             PobierzDane();
         }
+
+        private void usunButton_Click(object sender, EventArgs e)
+        {
+            var selectedRows = zwierzetaGrid.SelectedRows;
+            if (selectedRows.Count != 1)
+            {
+                MessageBox.Show("Musisz zaznaczyć jeden wiersz");
+            }
+            else
+            {
+                var zwierze = selectedRows[0].DataBoundItem as Zwierze;
+                using SqlConnection con = new SqlConnection(Constants.ConnectionString);
+                SqlCommand com = new SqlCommand();
+                com.Connection = con;
+                com.CommandText = "delete from Zwierze where IdZwierze = @IdZwierze";
+                com.Parameters.AddWithValue("@IdZwierze", zwierze.IdZwierze);
+                con.Open();
+                com.ExecuteNonQuery();
+                PobierzDane();
+            }
+        }
     }
 }

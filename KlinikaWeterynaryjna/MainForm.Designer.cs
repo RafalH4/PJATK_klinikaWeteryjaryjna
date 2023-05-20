@@ -1,4 +1,6 @@
-﻿namespace KlinikaWeterynaryjna
+﻿using System.Windows.Forms;
+
+namespace KlinikaWeterynaryjna
 {
     partial class MainForm
     {
@@ -43,6 +45,7 @@
             zwierzetaGrid.Name = "zwierzetaGrid";
             zwierzetaGrid.RowHeadersWidth = 51;
             zwierzetaGrid.RowTemplate.Height = 29;
+            zwierzetaGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             zwierzetaGrid.Size = new Size(1107, 317);
             zwierzetaGrid.TabIndex = 0;
             // 
@@ -83,6 +86,7 @@
             usunButton.TabIndex = 4;
             usunButton.Text = "Usuń";
             usunButton.UseVisualStyleBackColor = true;
+            usunButton.Click += usunButton_Click;
             // 
             // MainForm
             // 

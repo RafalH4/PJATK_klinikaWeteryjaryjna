@@ -49,5 +49,11 @@ namespace KlinikaWeterynaryjna
 
         }
 
+        private void dodajButton_Click(object sender, EventArgs e)
+        {
+            var okno = new AddEditAnimalDialog();
+            okno.ShowDialog();
+            PobierzDane();
+        }
     }
 }

@@ -64,6 +64,7 @@
             dodajButton.TabIndex = 2;
             dodajButton.Text = "Dodaj";
             dodajButton.UseVisualStyleBackColor = true;
+            dodajButton.Click += dodajButton_Click;
             // 
             // edytujButton
             // 

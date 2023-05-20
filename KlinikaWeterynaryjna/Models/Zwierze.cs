@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KlinikaWeterynaryjna.Models
 {
-    internal class Zwierze
+    public class Zwierze
     {
         public int IdZwierze { get; set; }
         public string Nazwa { get; set; }

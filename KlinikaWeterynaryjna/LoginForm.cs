@@ -39,11 +39,9 @@ namespace KlinikaWeterynaryjna
             if (dr.Read())
             {
                 string login = dr["Login"].ToString();
-                //int iUzytkownika = (int)dr["IdUzytkownik"];
-                MessageBox.Show("Zalogowano poprawnie");
-                //var glowneOkno = new MainForm(login);
-                ////Hide();
-                //glowneOkno.Show();
+                var glowneOkno = new MainForm();
+                Hide();
+                glowneOkno.Show();
             }
             else
             {

@@ -34,11 +34,11 @@
             dataOstWizytyLabel = new Label();
             wlascicielLabel = new Label();
             nazwaTextBox = new TextBox();
-            gatunekTextBox = new TextBox();
             dataOstWIzytyDatePicker = new DateTimePicker();
             wlascicieleComboBox = new ComboBox();
             okButton = new Button();
             anulujButton = new Button();
+            gatunekComboBox = new ComboBox();
             SuspendLayout();
             // 
             // animalInfo
@@ -94,13 +94,6 @@
             nazwaTextBox.Size = new Size(250, 27);
             nazwaTextBox.TabIndex = 5;
             // 
-            // gatunekTextBox
-            // 
-            gatunekTextBox.Location = new Point(152, 108);
-            gatunekTextBox.Name = "gatunekTextBox";
-            gatunekTextBox.Size = new Size(250, 27);
-            gatunekTextBox.TabIndex = 6;
-            // 
             // dataOstWIzytyDatePicker
             // 
             dataOstWIzytyDatePicker.Location = new Point(152, 148);
@@ -136,16 +129,25 @@
             anulujButton.UseVisualStyleBackColor = true;
             anulujButton.Click += anulujButton_Click;
             // 
+            // gatunekComboBox
+            // 
+            gatunekComboBox.FormattingEnabled = true;
+            gatunekComboBox.Items.AddRange(new object[] { "Pies", "Kot", "Lew", "Tygrys", "Słoń", "Żyrafa", "Koń", "Niedźwiedź", "Wieloryb", "Orka", "Pingwin" });
+            gatunekComboBox.Location = new Point(152, 108);
+            gatunekComboBox.Name = "gatunekComboBox";
+            gatunekComboBox.Size = new Size(250, 28);
+            gatunekComboBox.TabIndex = 11;
+            // 
             // AddEditAnimalDialog
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(428, 303);
+            Controls.Add(gatunekComboBox);
             Controls.Add(anulujButton);
             Controls.Add(okButton);
             Controls.Add(wlascicieleComboBox);
             Controls.Add(dataOstWIzytyDatePicker);
-            Controls.Add(gatunekTextBox);
             Controls.Add(nazwaTextBox);
             Controls.Add(wlascicielLabel);
             Controls.Add(dataOstWizytyLabel);
@@ -166,10 +168,10 @@
         private Label dataOstWizytyLabel;
         private Label wlascicielLabel;
         private TextBox nazwaTextBox;
-        private TextBox gatunekTextBox;
         private DateTimePicker dataOstWIzytyDatePicker;
         private ComboBox wlascicieleComboBox;
         private Button okButton;
         private Button anulujButton;
+        private ComboBox gatunekComboBox;
     }
 }

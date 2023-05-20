@@ -24,7 +24,16 @@ namespace KlinikaWeterynaryjna
                 _zwierze = zwierze;
                 animalInfo.Text = $"Edycja zwierzęcia: {zwierze.Nazwa}";
                 nazwaTextBox.Text = zwierze.Nazwa;
-                gatunekTextBox.Text = zwierze.Gatunek;
+                try
+                {
+                    gatunekComboBox.SelectedItem = zwierze.Gatunek;
+                }
+                catch(Exception ex)
+                {
+
+                    MessageBox.Show("Gatunek nie został odnaleziony");
+                }
+                
             }
 
         }
@@ -62,9 +71,9 @@ namespace KlinikaWeterynaryjna
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            if (nazwaTextBox.Text == "" || gatunekTextBox.Text == "")
+            if (nazwaTextBox.Text == "" || gatunekComboBox.SelectedIndex == -1)
             {
-                MessageBox.Show("Nie wszystkie pola zostały uzupełnione");
+                MessageBox.Show("Nie wszystkie pola zostały poprawnie uzupełnione");
                 return;
             }
             var dataOstWizyty = dataOstWIzytyDatePicker.Value;
@@ -83,11 +92,11 @@ namespace KlinikaWeterynaryjna
                     ",gatunek = @gatunek" +
                     ",dataOstWizyty = @dataOstWizyty," +
                     "idWlasciciel = @wlascicielId where IdZwierze = @idZwierze";
-                com.Parameters.AddWithValue("@idPracownik", _zwierze.IdZwierze);
+                com.Parameters.AddWithValue("@idZwierze", _zwierze.IdZwierze);
             }
 
             com.Parameters.AddWithValue("@nazwa", nazwaTextBox.Text);
-            com.Parameters.AddWithValue("@gatunek", gatunekTextBox.Text);
+            com.Parameters.AddWithValue("@gatunek", gatunekComboBox.Text);
             com.Parameters.AddWithValue("@dataOstWizyty", dataOstWizyty);
             com.Parameters.AddWithValue("@wlascicielId", (int)wlascicieleComboBox.SelectedValue);
             con.Open();

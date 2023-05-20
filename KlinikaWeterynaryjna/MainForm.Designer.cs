@@ -77,6 +77,7 @@ namespace KlinikaWeterynaryjna
             edytujButton.TabIndex = 3;
             edytujButton.Text = "Edytuj";
             edytujButton.UseVisualStyleBackColor = true;
+            edytujButton.Click += edytujButton_Click;
             // 
             // usunButton
             // 

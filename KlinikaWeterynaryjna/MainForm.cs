@@ -76,5 +76,21 @@ namespace KlinikaWeterynaryjna
                 PobierzDane();
             }
         }
+
+        private void edytujButton_Click(object sender, EventArgs e)
+        {
+            var selectedRows = zwierzetaGrid.SelectedRows;
+            if (selectedRows.Count != 1)
+            {
+                MessageBox.Show("Musisz zaznaczyć jeden wiersz");
+            }
+            else
+            {
+                var zwierze = selectedRows[0].DataBoundItem as Zwierze;
+                var okno = new AddEditAnimalDialog(zwierze);
+                okno.ShowDialog();
+                PobierzDane();
+            }
+        }
     }
 }

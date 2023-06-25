@@ -1,4 +1,5 @@
-﻿using KlinikaWeterynaryjna.Models;
+﻿//using KlinikaWeterynaryjna.Models;
+using KlinikaWeterynaryjna.Domain;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +15,7 @@ namespace KlinikaWeterynaryjna
 {
     public partial class MainForm : Form
     {
+        private readonly KlinikaWeterynaryjnaContext _dbContext = new KlinikaWeterynaryjnaContext();
         public MainForm()
         {
             InitializeComponent();
@@ -21,32 +23,9 @@ namespace KlinikaWeterynaryjna
         }
         private void PobierzDane()
         {
-            using SqlConnection con = new SqlConnection(Constants.ConnectionString);
-            SqlCommand com = new SqlCommand();
-            var sql = "select * from ZwierzetaZWlascicielami";
-            com.Connection = con;
-            com.CommandText = sql;
-            con.Open();
+            var data = _dbContext.ZwierzetaZwlascicielamis;
 
-            SqlDataReader dr = com.ExecuteReader();
-            var zwierzeta = new List<Zwierze>();
-
-            while (dr.Read() == true)
-            {
-                zwierzeta.Add(new Zwierze()
-                {
-                    IdZwierze = (int)dr["IdZwierze"],
-                    Nazwa = dr["Nazwa"].ToString(),
-                    Gatunek = dr["Gatunek"].ToString(),
-                    DataOstWizyty = DateTime.Parse(dr["DataOstwizyty"].ToString()),
-                    IdWlasciciel = (int)dr["IdWlasciciel"],
-                    ImieWlasciciela = dr["Imie"].ToString(),
-                    NazwiskoWlasciciela = dr["Nazwisko"].ToString()
-                });
-            }
-            zwierzetaGrid.DataSource = zwierzeta;
-            con.Dispose();
-
+            zwierzetaGrid.DataSource = data.ToList();
         }
 
         private void dodajButton_Click(object sender, EventArgs e)
@@ -65,14 +44,14 @@ namespace KlinikaWeterynaryjna
             }
             else
             {
-                var zwierze = selectedRows[0].DataBoundItem as Zwierze;
-                using SqlConnection con = new SqlConnection(Constants.ConnectionString);
-                SqlCommand com = new SqlCommand();
-                com.Connection = con;
-                com.CommandText = "delete from Zwierze where IdZwierze = @IdZwierze";
-                com.Parameters.AddWithValue("@IdZwierze", zwierze.IdZwierze);
-                con.Open();
-                com.ExecuteNonQuery();
+                var zwierze = selectedRows[0].DataBoundItem as ZwierzetaZwlascicielami;
+                var zwierzeDoUsuniecia = _dbContext.Zwierzes.FirstOrDefault(x => x.IdZwierze == zwierze.IdZwierze);
+                if (zwierzeDoUsuniecia == null)
+                {
+                    MessageBox.Show("Zwierze nie zostało zaznaczone");
+                }
+                _dbContext.Zwierzes.Remove(zwierzeDoUsuniecia);
+                _dbContext.SaveChanges();
                 PobierzDane();
             }
         }
@@ -86,7 +65,7 @@ namespace KlinikaWeterynaryjna
             }
             else
             {
-                var zwierze = selectedRows[0].DataBoundItem as Zwierze;
+                var zwierze = selectedRows[0].DataBoundItem as ZwierzetaZwlascicielami;
                 var okno = new AddEditAnimalDialog(zwierze);
                 okno.ShowDialog();
                 PobierzDane();

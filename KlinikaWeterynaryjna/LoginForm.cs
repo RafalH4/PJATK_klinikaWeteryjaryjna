@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KlinikaWeterynaryjna.Domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,31 +26,19 @@ namespace KlinikaWeterynaryjna
                 MessageBox.Show("Nie wprowadzono loginu i/lub hasła");
                 return;
             }
-            SqlConnection con = new SqlConnection(Constants.ConnectionString);
-            SqlCommand com = new SqlCommand();
-            var sql = "select * from uzytkownik where login = @login and haslo = @haslo";
-            com.Connection = con;
-            com.CommandText = sql;
-            com.Parameters.AddWithValue("@login", loginTextBox.Text);
-            com.Parameters.AddWithValue("@haslo", hasloTextBox.Text);
-
-            con.Open();
-            SqlDataReader dr = com.ExecuteReader();
-
-            if (dr.Read())
-            {
-                string login = dr["Login"].ToString();
-                var glowneOkno = new MainForm();
-                Hide();
-                glowneOkno.Show();
+            var context = new KlinikaWeterynaryjnaContext();
+            var user = context.Uzytkowniks.FirstOrDefault(x => x.Login == loginTextBox.Text);
+            if (user == null) {
+                MessageBox.Show("Niepoprawny login/hasło");
             }
-            else
+            if(user.Haslo != hasloTextBox.Text)
             {
                 MessageBox.Show("Niepoprawny login/hasło");
             }
+            var glowneOkno = new MainForm();
+            Hide();
+            glowneOkno.Show();
 
-            //5. Zamknięcie połączenia
-            con.Dispose();
         }
 
         private void anulujButton_Click(object sender, EventArgs e)

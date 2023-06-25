@@ -1,4 +1,5 @@
-﻿using KlinikaWeterynaryjna.Models;
+﻿using KlinikaWeterynaryjna.Domain;
+//using KlinikaWeterynaryjna.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,8 +15,9 @@ namespace KlinikaWeterynaryjna
 {
     public partial class AddEditAnimalDialog : Form
     {
-        private Zwierze _zwierze;
-        public AddEditAnimalDialog(Zwierze zwierze = null)
+        private ZwierzetaZwlascicielami _zwierze;
+        private readonly KlinikaWeterynaryjnaContext _dbContext = new KlinikaWeterynaryjnaContext();
+        public AddEditAnimalDialog(ZwierzetaZwlascicielami zwierze = null)
         {
             InitializeComponent();
             PobierzWlascicieli();
@@ -39,29 +41,15 @@ namespace KlinikaWeterynaryjna
         }
         void PobierzWlascicieli()
         {
-            using SqlConnection con = new SqlConnection(Constants.ConnectionString);
-            SqlCommand com = new SqlCommand();
-            var sql = "select * from Wlasciciel";
-            com.Connection = con;
-            com.CommandText = sql;
-            con.Open();
-
-            SqlDataReader dr = com.ExecuteReader();
-            var wlasciciele = new List<Wlasciciel>();
-
-            while (dr.Read() == true)
+            var wlasciciele = _dbContext.Wlasciciels;
+            wlascicieleComboBox.DataSource = wlasciciele.Select(x => new
             {
-                wlasciciele.Add(new Wlasciciel()
-                {
-                    IdWlasciciel = (int)dr["IdWlasciciel"],
-                    Imie = dr["Imie"].ToString(),
-                    Nazwisko = dr["Nazwisko"].ToString(),
-                });
-            }
-            wlascicieleComboBox.DataSource = wlasciciele;
+                ImieNazwisko = $"{x.Imie} {x.Nazwisko}",
+                IdWlasciciel = x.IdWlasciciel
+
+            }).ToList();
             wlascicieleComboBox.DisplayMember = "ImieNazwisko";
             wlascicieleComboBox.ValueMember = "IdWlasciciel";
-            con.Dispose();
         }
 
         private void anulujButton_Click(object sender, EventArgs e)
@@ -76,32 +64,34 @@ namespace KlinikaWeterynaryjna
                 MessageBox.Show("Nie wszystkie pola zostały poprawnie uzupełnione");
                 return;
             }
-            var dataOstWizyty = dataOstWIzytyDatePicker.Value;
-            var con = new SqlConnection(Constants.ConnectionString);
-            var com = new SqlCommand();
-            com.Connection = con;
 
+            var dataOstWizyty = dataOstWIzytyDatePicker.Value;
             if (_zwierze == null)
             {
-                com.CommandText = "insert into Zwierze(Nazwa, Gatunek, DataOstWizyty, IdWlasciciel) values (@nazwa, @gatunek, @dataOstWizyty, @wlascicielId)";
+                var zwierzeToAdd = new Zwierze()
+                {
+                    Nazwa = nazwaTextBox.Text,
+                    Gatunek = gatunekComboBox.Text,
+                    DataOstWizyty = dataOstWizyty,
+                    IdWlasciciel = (int)wlascicieleComboBox.SelectedValue
+
+                };
+                _dbContext.Zwierzes.Add(zwierzeToAdd);
             }
             else
             {
-                com.CommandText = "Update Zwierze " +
-                    "Set nazwa = @nazwa" +
-                    ",gatunek = @gatunek" +
-                    ",dataOstWizyty = @dataOstWizyty," +
-                    "idWlasciciel = @wlascicielId where IdZwierze = @idZwierze";
-                com.Parameters.AddWithValue("@idZwierze", _zwierze.IdZwierze);
+                var zwierzeToUpdate = _dbContext.Zwierzes.FirstOrDefault(x => x.IdZwierze == _zwierze.IdZwierze);
+                if(zwierzeToUpdate == null)
+                {
+                    MessageBox.Show("Zwierze do aktualizacji nie zostało znalezione w bazie danych");
+                }
+                zwierzeToUpdate.Nazwa = nazwaTextBox.Text;
+                zwierzeToUpdate.Gatunek = gatunekComboBox.Text;
+                zwierzeToUpdate.DataOstWizyty = dataOstWizyty;
+                zwierzeToUpdate.IdWlasciciel = (int)wlascicieleComboBox.SelectedValue;
+                _dbContext.Zwierzes.Update(zwierzeToUpdate);
             }
-
-            com.Parameters.AddWithValue("@nazwa", nazwaTextBox.Text);
-            com.Parameters.AddWithValue("@gatunek", gatunekComboBox.Text);
-            com.Parameters.AddWithValue("@dataOstWizyty", dataOstWizyty);
-            com.Parameters.AddWithValue("@wlascicielId", (int)wlascicieleComboBox.SelectedValue);
-            con.Open();
-            com.ExecuteNonQuery();
-            con.Close();
+            _dbContext.SaveChanges();
             Close();
         }
     }
